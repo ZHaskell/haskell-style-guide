@@ -47,7 +47,7 @@ are large.  Use your judgement.
 Surround binary operators with a single space on either side.  Use
 your better judgement for the insertion of spaces around arithmetic
 operators but always be consistent about whitespace on either side of
-a binary operator.  Don't insert a space after a lambda.
+a binary operator. Please insert a space after a lambda.
 
 ### Data Declarations
 
@@ -100,13 +100,13 @@ directions = [ North
 
 ### Pragmas
 
-Put pragmas immediately following the function they apply to.
+Put pragmas immediately following the function type:
 Example:
 
 ```haskell
 id :: a -> a
-id x = x
 {-# INLINE id #-}
+id x = x
 ```
 
 In the case of data type definitions you must put the pragma before
@@ -125,13 +125,13 @@ your judgement.  Some examples:
 
 ```haskell
 bar :: IO ()
-bar = forM_ [1, 2, 3] $ \n -> do
+bar = forM_ [1, 2, 3] $ \ n -> do
           putStrLn "Here comes a number!"
           print n
 
 foo :: IO ()
-foo = alloca 10 $ \a ->
-      alloca 20 $ \b ->
+foo = alloca 10 $ \ a ->
+      alloca 20 $ \ b ->
       cFunction a b
 ```
 
@@ -141,15 +141,14 @@ Format export lists as follows:
 
 ```haskell
 module Data.Set
-    (
-      -- * The @Set@ type
-      Set
-    , empty
-    , singleton
+  ( -- * The @Set@ type
+    Set
+  , empty
+  , singleton
 
-      -- * Querying
-    , member
-    ) where
+    -- * Querying
+  , member
+  ) where
 ```
 
 ### If-then-else clauses
@@ -159,30 +158,13 @@ clauses, where possible.  Short cases should usually be put on a single line
 (when line length allows it).
 
 When writing non-monadic code (i.e. when not using `do`) and guards
-and pattern matches can't be used, you can align if-then-else clauses
+and pattern matches can't be used, you should align if-then-else clauses
 like you would normal expressions:
 
 ```haskell
 foo = if ...
       then ...
       else ...
-```
-
-Otherwise, you should be consistent with the 4-spaces indent rule, and the
-`then` and the `else` keyword should be aligned.  Examples:
-
-```haskell
-foo = do
-    someCode
-    if condition
-        then someMoreCode
-        else someAlternativeCode
-```
-
-```haskell
-foo = bar $ \qux -> if predicate qux
-    then doSomethingSilly
-    else someOtherCode
 ```
 
 The same rule applies to nested do blocks:
@@ -192,12 +174,12 @@ foo = do
     instruction <- decodeInstruction
     skip <- load Memory.skip
     if skip == 0x0000
-        then do
-            execute instruction
-            addCycles $ instructionCycles instruction
-        else do
-            store Memory.skip 0x0000
-            addCycles 1
+    then do
+        execute instruction
+        addCycles $ instructionCycles instruction
+    else do
+        store Memory.skip 0x0000
+        addCycles 1
 ```
 
 ### Case expressions
@@ -214,9 +196,10 @@ foobar = case something of
 or as
 
 ```haskell
-foobar = case something of
-             Just j  -> foo
-             Nothing -> bar
+foobar = 
+    case something of
+        Just j  -> foo
+        Nothing -> bar
 ```
 
 Align the `->` arrows when it helps readability.
@@ -224,18 +207,7 @@ Align the `->` arrows when it helps readability.
 Imports
 -------
 
-Imports should be grouped in the following order:
-
-1. standard library imports
-2. related third party imports
-3. local application/library specific imports
-
-Put a blank line between each group of imports.  The imports in each
-group should be sorted alphabetically, by module name.
-
-Always use explicit import lists or `qualified` imports for standard
-and third party libraries.  This makes the code more robust against
-changes in these libraries.  Exception: The Prelude.
+Imports should be formated using [stylish-haskell](https://github.com/haskell/stylish-haskell).
 
 Comments
 --------
@@ -369,22 +341,6 @@ data Point = Point
     , pointY :: {-# UNPACK #-} !Double  -- ^ Y coordinate
     }
 ```
-
-As an alternative to the `UNPACK` pragma, you can put
-
-```haskell
-{-# OPTIONS_GHC -funbox-strict-fields #-}
-```
-
-at the top of the file.  Including this flag in the file itself instead
-of e.g. in the Cabal file is preferable as the optimization will be
-applied even if someone compiles the file using other means (i.e. the
-optimization is attached to the source code it belongs to).
-
-Note that `-funbox-strict-fields` applies to all strict fields, not
-just small fields (e.g. `Double` or `Int`).  If you're using GHC 7.4 or
-later you can use `NOUNPACK` to selectively opt-out for the unpacking
-enabled by `-funbox-strict-fields`.
 
 ### Functions
 
